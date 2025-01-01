@@ -1,0 +1,41 @@
+/*
+讲解：
+必须先切换到proto文件所在目录，在项目根目录下会很奇怪的动作
+protoc hello.proto \   //后面的所有路径都是相对与这个文件而言的，并且路径要提前手动建好！！！！
+--go_opt=paths=source_relative \   //表示使用相对路径（其他方式不好使..）
+--go_out=../rpc/hello  //生成文件路径，必须先建好，相对于proto文件
+
+
+实际命令：
+切换到hello.proto所在目录
+protoc --go_out=../rpc/hello \
+  --go_opt=paths=source_relative \
+  --go-grpc_out=../rpc/hello \
+  --go-grpc_opt=paths=source_relative ./hello.proto
+
+*/
+
+
+syntax = "proto3";
+
+package hello;
+option go_package = "golang/rpc/hello"; // 表示生成的go文件的包路径，相对于项目根目录，表示生成的go文件会放到项目根目录下的golang/rpc/hello目录下，并且package是hello
+
+
+
+// 定义数据结构：请求数据
+message HelloRequest {
+  string name = 1;
+}
+
+// 定义数据结构：响应数据
+message HelloReply {
+  string message = 1;
+}
+
+
+// 定义一个服务
+service Greeter {
+  // 定义一个方法
+  rpc SayHello (HelloRequest) returns (HelloReply) {}
+}
