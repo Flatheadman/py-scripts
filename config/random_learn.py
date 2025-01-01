@@ -11,7 +11,7 @@ arrays = {
             "实现并运行服务端: golang/server/server.go",
             "实现并运行客户端: golang/client/client.go",
         ]},
-        {"key": "应用-连接池", "value": [
+        {"key": "应用-rpc连接池", "value": [
             "库文件: golang/multiclient/multiclient.go", 
             "测试文件: golang/multiclient/multiclient_test.go",
         ]},
