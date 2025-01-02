@@ -8,18 +8,18 @@ import (
 	"go.uber.org/atomic"
 )
 
-// Client interface, simplified for local simulation
+
 type Client interface {
 	GetLatestValue() (int64, error)
 }
 
-// MultiClient structure remains the same
+
 type MultiClient struct {
 	clients   []Client
-	BestIndex atomic.Int32
+	BestIndex atomic.Int32 //如果这里变量名首字母小写，在其他的package中将不能直接访问。
 }
 
-// New creates a new MultiClient
+
 func New(clients []Client) *MultiClient {
 	m := &MultiClient{
 		clients: clients,
