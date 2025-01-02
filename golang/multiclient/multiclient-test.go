@@ -6,15 +6,15 @@ import (
 )
 
 func Test() {
-	// Create multiple LocalClient instances
+	
 	client1 := NewLocalClient(100)
 	client2 := NewLocalClient(101)
 	client3 := NewLocalClient(102)
 
-	// Create a MultiClient with the LocalClients
+	
 	m := New([]Client{client1, client2, client3})
 
-	// Run for a while to observe the behavior
+	
 	for i := 0; i < 10; i++ {
 		//因为*LocalClient实现了Client函数的GetLatestValue方法
 		//所以断言成功，并返回了断言类型的变量。参照以下函数实现:
