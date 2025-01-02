@@ -16,7 +16,9 @@ type Client interface {
 
 type MultiClient struct {
 	clients   []Client
-	BestIndex atomic.Int32 //如果这里变量名首字母小写，在其他的package中将不能直接访问。
+	//将变量声明为原子类型的整型
+	BestIndex atomic.Int32 
+	//如果这里变量名首字母小写，在其他的package中将不能直接访问。
 }
 
 
@@ -27,22 +29,23 @@ func New(clients []Client) *MultiClient {
 	if len(clients) > 1 {
 		go m.sniffLoop()
 	}
-	return m
+	return m  //这里不会导致上面的子协程被迫终止，因为本函数不是主协程，只有main函数是主协程。
 }
 
-// BestClient returns the currently best performing client
+
 func (m *MultiClient) BestClient() Client {
+	//Load函数:原子地读取变量值。
 	return m.clients[m.BestIndex.Load()]
 }
 
-// sniffLoop periodically checks client performance
 func (m *MultiClient) sniffLoop() {
 	t := time.NewTimer(0)
+	// Select模块的任意分支命中后，他的执行就结束了，所以需要加for循环。
 	for {
 		select {
 		case <-t.C:
 			m.sniff()
-			t.Reset(time.Second)
+			t.Reset(time.Second)//将心跳间隔重置为一秒。
 		}
 	}
 }
