@@ -5,7 +5,7 @@ import (
 	"sync"
 	"time"
 
-	"go.uber.org/atomic"
+	"go.uber.org/atomic"//主要为整型数据提供原子操作。
 )
 
 
@@ -50,13 +50,12 @@ func (m *MultiClient) sniffLoop() {
 	}
 }
 
-// sniff determines the best performing client based on value and latency
 func (m *MultiClient) sniff() {
 	var (
-		values = make([]int64, len(m.clients))
+		values = make([]int64, len(m.clients))//创建当前长度和容量相同的切片数组。
 		times  = make([]int64, len(m.clients))
-		l      sync.Mutex
-		wg     sync.WaitGroup
+		l      sync.Mutex //互斥锁。
+		wg     sync.WaitGroup //等待组。
 	)
 	wg.Add(len(m.clients))
 	for i, client := range m.clients {
@@ -66,6 +65,8 @@ func (m *MultiClient) sniff() {
 			start := time.Now().UnixNano()
 			value, _ := client.GetLatestValue()
 			l.Lock()
+			//切片数组的本质是一个结构体，虽然访问不同的切片数据索引，但是都是在读取这个结构体。
+			//这个结构体的内部运作是复杂的，不是1+1=2，所以需要互斥锁来保护。
 			values[i] = value
 			times[i] = time.Now().UnixNano() - start
 			l.Unlock()
@@ -93,20 +94,20 @@ func (m *MultiClient) sniff() {
 	m.BestIndex.Store(int32(bestClient))
 }
 
-// LocalClient simulates an external client with random values and latency
+// 实际上的客户端，会继承client接口和其中定义的函数。
 type LocalClient struct {
 	CurrentValue int64
 	Mutex        sync.Mutex
 }
 
-// NewLocalClient creates a new LocalClient
+
 func NewLocalClient(initialValue int64) *LocalClient {
 	return &LocalClient{
 		CurrentValue: initialValue,
 	}
 }
 
-// GetLatestValue simulates getting the latest value from an external source
+// 本方法继承自client接口。
 func (c *LocalClient) GetLatestValue() (int64, error) {
 	// Simulate network latency
 	time.Sleep(time.Duration(rand.Intn(500)) * time.Millisecond)
