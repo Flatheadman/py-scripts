@@ -96,7 +96,7 @@ func (m *MultiClient) sniff() {
 
 // 实际上的客户端，会继承client接口和其中定义的函数。
 type LocalClient struct {
-	CurrentValue int64
+	CurrentValue int64 //本变量天生被多线程修改，标配一把锁。
 	Mutex        sync.Mutex
 }
 
